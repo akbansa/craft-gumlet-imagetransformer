@@ -10,7 +10,6 @@ use gumlet\imagetransformer\models\Settings;
 use gumlet\imagetransformer\services\Gumlet as GumletService;
 use gumlet\imagetransformer\transformers\GumletTransformer;
 use gumlet\imagetransformer\twigextensions\GumletTwigExtension;
-use Twig\Extension\ExtensionInterface;
 use yii\base\Event;
 
 /**
@@ -76,6 +75,15 @@ class Plugin extends BasePlugin
             // Silently fail if service isn't available (e.g., during early installation phase)
         }
 
+        // Register Twig extension
+        try {
+            if (Craft::$app->getView()) {
+                Craft::$app->getView()->registerTwigExtension(new GumletTwigExtension());
+            }
+        } catch (\Throwable $e) {
+            // Silently fail if view service isn't available
+        }
+
         // Register Gumlet service as a Twig variable (only for web requests)
         Event::on(
             CraftVariable::class,
@@ -104,14 +112,6 @@ class Plugin extends BasePlugin
                 }
             }
         );
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getTwigExtension(): ExtensionInterface
-    {
-        return new GumletTwigExtension();
     }
 
     /**

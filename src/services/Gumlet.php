@@ -180,21 +180,6 @@ class Gumlet extends Component
                     $params['f'] = $mappedFormat;
                 }
             }
-
-            // Mode/Fit
-            if (!empty($transform->mode)) {
-                $params['fit'] = $this->mapMode($transform->mode);
-            }
-
-            // Position/Focus
-            if (!empty($transform->position)) {
-                $params['crop'] = $this->mapPosition($transform->position);
-            }
-
-            // Interlace
-            if ($transform->interlace) {
-                $params['interlace'] = '1';
-            }
         }
 
         // Merge additional Gumlet-specific parameters

@@ -2,7 +2,7 @@
     "name": "gumlet/craft-gumlet-imagetransformer",
     "description": "Gumlet asset transforms for Craft CMS",
     "type": "craft-plugin",
-    "version": "1.2.0",
+    "version": "1.2.1",
     "keywords": [
         "craft",
         "cms",
