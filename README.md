@@ -45,11 +45,45 @@ return [
 
 ## Usage
 
-This plugin is a drop-in replacement for Craft CMS native image transforms and `.srcset()` method.
+This plugin provides multiple ways to generate Gumlet URLs for your images:
 
-You shouldn't have to update any of your templates unless you want to add additional Gumlet parameters.
+1. **Automatic transformer** (when configured as default) - Works with `asset.setTransform()` and `asset.url`
+2. **Twig function** - Use `gumletUrl()` function in templates
+3. **Service method** - Use `craft.gumlet.buildUrl()` in templates
 
-### Basic Usage
+### Method 1: Using Twig Function (Recommended)
+
+The easiest way to generate Gumlet URLs is using the `gumletUrl()` Twig function:
+
+```twig
+{# Basic usage with transform array #}
+<img src="{{ gumletUrl(asset, { width: 300, height: 300 }) }}" alt="{{ asset.title }}" />
+
+{# With additional Gumlet parameters #}
+<img src="{{ gumletUrl(asset, { width: 300, height: 300 }, { blur: 10, brightness: 5 }) }}" alt="{{ asset.title }}" />
+
+{# With quality and format #}
+<img src="{{ gumletUrl(asset, { width: 500, height: 500, quality: 85, format: 'webp' }) }}" alt="{{ asset.title }}" />
+```
+
+### Method 2: Using Service Method
+
+You can also use the Gumlet service directly:
+
+```twig
+{# Basic usage #}
+<img src="{{ craft.gumlet.buildUrl(asset, { width: 300, height: 300 }) }}" alt="{{ asset.title }}" />
+
+{# With Gumlet-specific parameters in the transform array #}
+<img src="{{ craft.gumlet.buildUrl(asset, { width: 300, height: 300, gumlet: { blur: 10 } }) }}" alt="{{ asset.title }}" />
+
+{# Without transform (just replaces domain) #}
+<img src="{{ craft.gumlet.buildUrl(asset) }}" alt="{{ asset.title }}" />
+```
+
+### Method 3: Using Asset Transforms (If Transformer is Active)
+
+If the Gumlet transformer is set as the default, you can use Craft's native transform methods:
 
 ```twig
 {# Set the transform #}
@@ -68,7 +102,9 @@ You shouldn't have to update any of your templates unless you want to add additi
 }) }}
 ```
 
-### Adding additional transform parameters
+**Note:** The automatic transformer may not always be active depending on your Craft CMS configuration. Using `gumletUrl()` or `craft.gumlet.buildUrl()` is more reliable.
+
+### Adding Additional Gumlet Parameters
 
 In addition to the standard Craft CMS transform options:
 
@@ -80,28 +116,38 @@ In addition to the standard Craft CMS transform options:
 * `position`
 * `fill`
 
-You can also apply additional Gumlet parameters to your image transforms by adding them to the transform options under the `gumlet` object key.
+You can also apply additional Gumlet parameters. There are two ways to do this:
+
+**Option 1: Using the `gumlet` key in transform array**
 
 ```twig
-{# Set the transform #}
-{% do asset.setTransform({ 
+{# Using gumletUrl() function #}
+<img src="{{ gumletUrl(asset, { 
     width: 300, 
     height: 300,
     gumlet: {
         blur: 20,
         brightness: 10,
         contrast: 5,
-    },
-}) %}
+    }
+}) }}" alt="{{ asset.title }}" />
 
-{# Render the tag #}
-{{ tag('img', {
-  src: asset.url,
-  width: asset.width,
-  height: asset.height,
-  srcset: asset.getSrcset(['1.5x', '2x', '3x']),
-  alt: asset.title,
-}) }}
+{# Using service method #}
+<img src="{{ craft.gumlet.buildUrl(asset, { 
+    width: 300, 
+    height: 300,
+    gumlet: {
+        blur: 20,
+        brightness: 10,
+        contrast: 5,
+    }
+}) }}" alt="{{ asset.title }}" />
+```
+
+**Option 2: Passing as third parameter (gumletUrl only)**
+
+```twig
+<img src="{{ gumletUrl(asset, { width: 300, height: 300 }, { blur: 20, brightness: 10 }) }}" alt="{{ asset.title }}" />
 ```
 
 ### Available Gumlet Parameters

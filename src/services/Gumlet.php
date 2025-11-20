@@ -65,11 +65,11 @@ class Gumlet extends Component
      * Build a Gumlet URL from an asset and transform
      *
      * @param Asset $asset The asset to transform
-     * @param ImageTransform|null $transform The transform to apply
+     * @param ImageTransform|array|null $transform The transform to apply (can be ImageTransform object or array)
      * @param array $additionalParams Additional Gumlet-specific parameters
      * @return string The transformed URL
      */
-    public function buildUrl(Asset $asset, ?ImageTransform $transform = null, array $additionalParams = []): string
+    public function buildUrl(Asset $asset, ImageTransform|array|null $transform = null, array $additionalParams = []): string
     {
         if (!$this->isEnabled()) {
             return $asset->getUrl();
@@ -81,6 +81,19 @@ class Gumlet extends Component
             // If domain is not configured, return original URL
             // This allows the plugin to work even if Gumlet isn't configured yet
             return $asset->getUrl();
+        }
+
+        // Convert array transform to ImageTransform object if needed
+        $transformObj = null;
+        if (is_array($transform)) {
+            // Extract additional Gumlet params if they exist in the array
+            if (isset($transform['gumlet']) && is_array($transform['gumlet'])) {
+                $additionalParams = array_merge($transform['gumlet'], $additionalParams);
+                unset($transform['gumlet']);
+            }
+            $transformObj = new ImageTransform($transform);
+        } else {
+            $transformObj = $transform;
         }
 
         // Get the asset URL - use the volume's base URL or the asset's URL
@@ -95,7 +108,7 @@ class Gumlet extends Component
         }
 
         // Build query parameters
-        $params = $this->buildParams($transform, $additionalParams);
+        $params = $this->buildParams($transformObj, $additionalParams);
 
         // Even if no transform params, return the Gumlet URL (for optimization)
         if (empty($params)) {

@@ -9,6 +9,8 @@ use craft\web\twig\variables\CraftVariable;
 use gumlet\imagetransformer\models\Settings;
 use gumlet\imagetransformer\services\Gumlet as GumletService;
 use gumlet\imagetransformer\transformers\GumletTransformer;
+use gumlet\imagetransformer\twigextensions\GumletTwigExtension;
+use Twig\Extension\ExtensionInterface;
 use yii\base\Event;
 
 /**
@@ -102,6 +104,14 @@ class Plugin extends BasePlugin
                 }
             }
         );
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getTwigExtension(): ExtensionInterface
+    {
+        return new GumletTwigExtension();
     }
 
     /**
