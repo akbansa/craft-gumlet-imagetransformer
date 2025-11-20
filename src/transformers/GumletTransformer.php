@@ -20,7 +20,8 @@ class GumletTransformer implements ImageTransformerInterface
      */
     public function getTransformUrl(Asset $asset, ImageTransform $transform, bool $immediately): string
     {
-        $gumlet = Plugin::getInstance()->getGumlet();
+        $plugin = Plugin::getInstance();
+        $gumlet = $plugin->gumlet;
         
         // Extract additional Gumlet parameters from transform
         $additionalParams = [];

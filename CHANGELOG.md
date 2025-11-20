@@ -1,6 +1,6 @@
 # Release Notes for Gumlet
 
-## 1.2.1 - 2025-11-20
+## 1.2.2 - 2025-11-20
 
 ### Added
 - `gumletUrl()` Twig function for easy URL generation

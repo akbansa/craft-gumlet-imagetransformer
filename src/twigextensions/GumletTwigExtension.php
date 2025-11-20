@@ -33,7 +33,10 @@ class GumletTwigExtension extends AbstractExtension
      */
     public function gumletUrl(Asset $asset, $transform = null, array $additionalParams = []): string
     {
-        $gumlet = Plugin::getInstance()->getGumlet();
+        $plugin = Plugin::getInstance();
+        
+        // Access the gumlet component as a property (created by Craft from config())
+        $gumlet = $plugin->gumlet;
         
         // Convert array transform to ImageTransform object if needed
         if (is_array($transform)) {
