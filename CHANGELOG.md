@@ -1,5 +1,13 @@
 # Release Notes for Gumlet
 
+## 1.3.2 - 2025-11-20
+
+### Changed
+- Made transform parameter handling type-safe
+- Only valid ImageTransform properties (width, height, quality, format) are accepted
+- All other parameters are automatically routed to additionalParams
+- Prevents "Setting unknown property" errors
+
 ## 1.3.1 - 2025-11-20
 
 ### Changed

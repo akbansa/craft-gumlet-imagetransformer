@@ -86,7 +86,33 @@ class Gumlet extends Component
         // Convert array transform to ImageTransform object if needed
         $transformObj = null;
         if (is_array($transform)) {
-            $transformObj = new ImageTransform($transform);
+            // Whitelist of valid ImageTransform properties
+            // Only these properties are accepted by ImageTransform constructor
+            $validTransformProps = [
+                'width',
+                'height',
+                'quality',
+                'format',
+            ];
+            
+            // Separate valid transform properties from additional params
+            $transformProps = [];
+            $extractedParams = [];
+            
+            foreach ($transform as $key => $value) {
+                if (in_array($key, $validTransformProps, true)) {
+                    $transformProps[$key] = $value;
+                } else {
+                    // Everything else goes to additionalParams
+                    $extractedParams[$key] = $value;
+                }
+            }
+            
+            // Merge extracted params with additionalParams (extracted params take precedence)
+            $additionalParams = array_merge($extractedParams, $additionalParams);
+            
+            // Create ImageTransform with only valid properties
+            $transformObj = new ImageTransform($transformProps);
         } else {
             $transformObj = $transform;
         }
