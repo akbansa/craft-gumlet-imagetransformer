@@ -26,6 +26,12 @@ class Plugin extends BasePlugin
     public bool $hasCpSettings = false;
 
     /**
+     * @var \craft\base\imagetransforms\ImageTransformerInterface|null
+     * Stores the original Craft transformer (currently not used, but kept for potential future use)
+     */
+    private ?\craft\base\imagetransforms\ImageTransformerInterface $originalTransformer = null;
+
+    /**
      * @inheritdoc
      */
     public static function config(): array
@@ -41,11 +47,25 @@ class Plugin extends BasePlugin
     {
         parent::init();
 
-        // Set Gumlet transformer as the default transformer
-        // This replaces Craft's default image transformer
-        Craft::$app->getImageTransforms()->setTransformer(new GumletTransformer());
+        // Override Craft's default image transformer with Gumlet transformer
+        // This replaces the default transformer completely, so all image transforms
+        // will go through Gumlet instead of Craft's native image processing
+        try {
+            $imageTransforms = Craft::$app->getImageTransforms();
+            if ($imageTransforms) {
+                // Store the original transformer in case we need to restore it
+                $this->originalTransformer = $imageTransforms->getTransformer();
+                
+                // Set Gumlet transformer as the new default
+                // This means ALL image transforms will use Gumlet URLs with query parameters
+                // instead of Craft's path-based transform URLs (e.g., _300x300_crop_center-center_none/)
+                $imageTransforms->setTransformer(new GumletTransformer());
+            }
+        } catch (\Throwable $e) {
+            // Silently fail if service isn't available (e.g., during early installation phase)
+        }
 
-        // Register Gumlet service as a Twig variable
+        // Register Gumlet service as a Twig variable (only for web requests)
         Event::on(
             CraftVariable::class,
             CraftVariable::EVENT_INIT,
