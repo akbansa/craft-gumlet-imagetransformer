@@ -22,7 +22,7 @@ use yii\base\Event;
  */
 class Plugin extends BasePlugin
 {
-    public string $schemaVersion = '1.3.3';
+    public string $schemaVersion = '1.3.4';
     public bool $hasCpSettings = false;
 
     /**

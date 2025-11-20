@@ -38,8 +38,6 @@ class GumletTwigExtension extends AbstractExtension
         // Access the gumlet component as a property (created by Craft from config())
         $gumlet = $plugin->gumlet;
         
-        // Pass the transform directly to buildUrl - it handles type-safe filtering
-        // buildUrl will filter out invalid properties and route them to additionalParams
         return $gumlet->buildUrl($asset, $transform, $additionalParams);
     }
 }

@@ -1,6 +1,6 @@
 # Release Notes for Gumlet
 
-## 1.3.3 - 2025-11-20
+## 1.3.4 - 2025-11-20
 
 ### Changed
 - Made transform parameter handling type-safe
