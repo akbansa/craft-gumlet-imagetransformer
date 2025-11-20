@@ -4,8 +4,8 @@ namespace gumlet\imagetransformer;
 
 use Craft;
 use craft\base\Plugin as BasePlugin;
-use craft\events\RegisterComponentTypesEvent;
 use craft\services\ImageTransforms;
+use craft\web\twig\variables\CraftVariable;
 use gumlet\imagetransformer\models\Settings;
 use gumlet\imagetransformer\services\Gumlet as GumletService;
 use gumlet\imagetransformer\transformers\GumletTransformer;
@@ -41,12 +41,18 @@ class Plugin extends BasePlugin
     {
         parent::init();
 
-        // Register the Gumlet transformer
+        // Set Gumlet transformer as the default transformer
+        // This replaces Craft's default image transformer
+        Craft::$app->getImageTransforms()->setTransformer(new GumletTransformer());
+
+        // Register Gumlet service as a Twig variable
         Event::on(
-            ImageTransforms::class,
-            ImageTransforms::EVENT_REGISTER_IMAGE_TRANSFORMERS,
-            function (RegisterComponentTypesEvent $event) {
-                $event->types[] = GumletTransformer::class;
+            CraftVariable::class,
+            CraftVariable::EVENT_INIT,
+            function (Event $event) {
+                /** @var CraftVariable $variable */
+                $variable = $event->sender;
+                $variable->set('gumlet', $this->getGumlet());
             }
         );
     }

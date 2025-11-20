@@ -69,10 +69,12 @@ class Gumlet extends Component
         $domain = $this->getDomain();
         
         if (empty($domain)) {
+            // If domain is not configured, return original URL
+            // This allows the plugin to work even if Gumlet isn't configured yet
             return $asset->getUrl();
         }
 
-        // Get the asset URL
+        // Get the asset URL - use the volume's base URL or the asset's URL
         $assetUrl = $asset->getUrl();
         
         // If the asset URL already contains the Gumlet domain, use it as-is
@@ -86,6 +88,7 @@ class Gumlet extends Component
         // Build query parameters
         $params = $this->buildParams($transform, $additionalParams);
 
+        // Even if no transform params, return the Gumlet URL (for optimization)
         if (empty($params)) {
             return $baseUrl;
         }
