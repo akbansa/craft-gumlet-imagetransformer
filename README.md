@@ -81,7 +81,8 @@ You can also use the Gumlet service directly:
 <img src="{{ craft.gumlet.buildUrl(asset) }}" alt="{{ asset.title }}" />
 ```
 
-### Method 3: Using Asset Transforms (If Transformer is Active)
+
+### Method 3: Using Asset Transforms and Transformation Arrays
 
 If the Gumlet transformer is set as the default, you can use Craft's native transform methods:
 
@@ -101,6 +102,27 @@ If the Gumlet transformer is set as the default, you can use Craft's native tran
   alt: asset.title,
 }) }}
 ```
+
+#### Direct Transformation Array Support
+
+You can now also pass a transformation array directly to `getUrl`, `getWidth`, and `getHeight`:
+
+```twig
+{% set thumb = {
+  mode: 'crop',
+  width: 100,
+  height: 100,
+  quality: 75,
+  position: 'top-center'
+} %}
+
+<img
+  src="{{ asset.getUrl(thumb) }}"
+  width="{{ asset.getWidth(thumb) }}"
+  height="{{ asset.getHeight(thumb) }}">
+```
+
+This works for both standard named transforms and custom arrays, and will always generate a Gumlet URL.
 
 **Note:** The automatic transformer may not always be active depending on your Craft CMS configuration. Using `gumletUrl()` or `craft.gumlet.buildUrl()` is more reliable.
 

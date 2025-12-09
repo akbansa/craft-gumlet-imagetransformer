@@ -5,11 +5,15 @@ namespace gumlet\imagetransformer;
 use Craft;
 use craft\base\Plugin as BasePlugin;
 use craft\services\ImageTransforms;
+use craft\elements\Asset;
+use craft\base\Model;
+use craft\events\DefineBehaviorsEvent
 use craft\web\twig\variables\CraftVariable;
 use gumlet\imagetransformer\models\Settings;
 use gumlet\imagetransformer\services\Gumlet as GumletService;
 use gumlet\imagetransformer\transformers\GumletTransformer;
 use gumlet\imagetransformer\twigextensions\GumletTwigExtension;
+use gumlet\imagetransformer\behaviors\GumletAssetBehavior;
 use yii\base\Event;
 
 /**
@@ -100,6 +104,15 @@ class Plugin extends BasePlugin
                 } catch (\Throwable $e) {
                     // Silently fail if service isn't available
                 }
+            }
+        );
+
+        // Attach GumletAssetBehavior to Asset elements
+        Event::on(
+            Asset::class,
+            Model::EVENT_DEFINE_BEHAVIORS,
+            function (DefineBehaviorsEvent $event) {
+                $event->behaviors[] = GumletAssetBehavior::class;
             }
         );
     }
