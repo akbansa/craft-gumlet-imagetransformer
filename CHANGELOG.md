@@ -1,5 +1,15 @@
 # Release Notes for Gumlet
 
+## 1.5.1 - 2025-12-10
+
+### Fixed
+- Prevented infinite recursion by building Gumlet URLs directly in `EVENT_BEFORE_DEFINE_URL` and marking the event handled.
+- Exposed `buildParams` publicly and added array transform normalization so event handlers can safely reuse transform logic.
+- Improved `DefineAssetUrlEvent` handler to use event properties and avoid unknown-method errors.
+
+### Changed
+- `getUrl`/transform behavior now consistently generates Gumlet URLs without calling back into Craft URL generation.
+
 ## 1.3.4 - 2025-11-20
 
 ### Changed

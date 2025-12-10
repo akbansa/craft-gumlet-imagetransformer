@@ -25,7 +25,7 @@ use yii\base\Event;
  */
 class Plugin extends BasePlugin
 {
-    public string $schemaVersion = '1.5.0';
+    public string $schemaVersion = '1.5.1';
     public bool $hasCpSettings = false;
 
     /**
