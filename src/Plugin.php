@@ -7,6 +7,7 @@ use craft\base\Plugin as BasePlugin;
 use craft\services\ImageTransforms;
 use craft\elements\Asset;
 use craft\base\Model;
+use craft\events\DefineAssetUrlEvent;
 use craft\web\twig\variables\CraftVariable;
 use gumlet\imagetransformer\models\Settings;
 use gumlet\imagetransformer\services\Gumlet as GumletService;
@@ -24,7 +25,7 @@ use yii\base\Event;
  */
 class Plugin extends BasePlugin
 {
-    public string $schemaVersion = '1.3.4';
+    public string $schemaVersion = '1.5.0';
     public bool $hasCpSettings = false;
 
     /**
@@ -109,15 +110,34 @@ class Plugin extends BasePlugin
         Event::on(
             Asset::class,
             Asset::EVENT_BEFORE_DEFINE_URL,
-            function ($event) {
+            function (DefineAssetUrlEvent $event) {
                 /** @var Asset $asset */
                 $asset = $event->sender;
                 $transform = $event->transform;
-                $gumlet = Craft::$app->get('gumlet', false) ?: Plugin::getInstance()->gumlet;
-                if (!$gumlet) {
+                $plugin = self::getInstance();
+                $gumlet = $plugin ? $plugin->gumlet : new GumletService();
+
+                // Bail if Gumlet is disabled or domain missing
+                if (!$gumlet->isEnabled()) {
                     return;
                 }
-                return $gumlet->buildUrl($asset, $transform);
+                $domain = $gumlet->getDomain();
+                if (!$domain) {
+                    return;
+                }
+
+                // Build base Gumlet URL without calling getUrl() to avoid recursion
+                $baseUrl = 'https://' . $domain . '/' . ltrim($asset->getPath(), '/');
+                $params = $gumlet->buildParams($transform);
+
+                if (empty($params)) {
+                    $event->url = $baseUrl;
+                    return;
+                }
+
+                $separator = str_contains($baseUrl, '?') ? '&' : '?';
+                $event->url = $baseUrl . $separator . http_build_query($params);
+                $event->handled = true;
             }
         );
     }
@@ -138,4 +158,3 @@ class Plugin extends BasePlugin
         return null; // Settings are managed via config file
     }
 }
-

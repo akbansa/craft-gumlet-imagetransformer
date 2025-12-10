@@ -174,9 +174,40 @@ class Gumlet extends Component
      * @param array $additionalParams Additional Gumlet-specific parameters
      * @return array The query parameters
      */
-    protected function buildParams(?ImageTransform $transform, array $additionalParams = []): array
+    /**
+     * Build query parameters from transform and additional params
+     *
+     * @param ImageTransform|array|null $transform The transform to convert
+     * @param array $additionalParams Additional Gumlet-specific parameters
+     * @return array The query parameters
+     */
+    public function buildParams(ImageTransform|array|null $transform, array $additionalParams = []): array
     {
         $params = [];
+
+        // Normalize array transforms into ImageTransform objects and merge extra params
+        if (is_array($transform)) {
+            $validTransformProps = [
+                'width',
+                'height',
+                'quality',
+                'format',
+            ];
+
+            $transformProps = [];
+            $extractedParams = [];
+
+            foreach ($transform as $key => $value) {
+                if (in_array($key, $validTransformProps, true)) {
+                    $transformProps[$key] = $value;
+                } else {
+                    $extractedParams[$key] = $value;
+                }
+            }
+
+            $additionalParams = array_merge($extractedParams, $additionalParams);
+            $transform = new ImageTransform($transformProps);
+        }
 
         if ($transform) {
             // Width
@@ -304,4 +335,3 @@ class Gumlet extends Component
         return $map[$position] ?? 'center';
     }
 }
-
