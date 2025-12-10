@@ -7,13 +7,11 @@ use craft\base\Plugin as BasePlugin;
 use craft\services\ImageTransforms;
 use craft\elements\Asset;
 use craft\base\Model;
-use craft\events\DefineBehaviorsEvent;
 use craft\web\twig\variables\CraftVariable;
 use gumlet\imagetransformer\models\Settings;
 use gumlet\imagetransformer\services\Gumlet as GumletService;
 use gumlet\imagetransformer\transformers\GumletTransformer;
 use gumlet\imagetransformer\twigextensions\GumletTwigExtension;
-use gumlet\imagetransformer\behaviors\GumletAssetBehavior;
 use yii\base\Event;
 
 /**
@@ -107,12 +105,19 @@ class Plugin extends BasePlugin
             }
         );
 
-        // Attach GumletAssetBehavior to Asset elements
+        // Override asset URLs with Gumlet URLs before they are defined
         Event::on(
             Asset::class,
-            Model::EVENT_DEFINE_BEHAVIORS,
-            function (DefineBehaviorsEvent $event) {
-                $event->behaviors[] = GumletAssetBehavior::class;
+            Asset::EVENT_BEFORE_DEFINE_URL,
+            function ($event) {
+                /** @var Asset $asset */
+                $asset = $event->sender;
+                $transform = $event->transform;
+                $gumlet = Craft::$app->get('gumlet', false) ?: Plugin::getInstance()->gumlet;
+                if (!$gumlet) {
+                    return;
+                }
+                return $gumlet->buildUrl($asset, $transform);
             }
         );
     }
