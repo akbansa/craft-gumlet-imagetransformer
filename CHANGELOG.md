@@ -1,6 +1,6 @@
 # Release Notes for Gumlet
 
-## 1.5.1 - 2025-12-10
+## 1.5.2 - 2025-12-10
 
 ### Fixed
 - Prevented infinite recursion by building Gumlet URLs directly in `EVENT_BEFORE_DEFINE_URL` and marking the event handled.
