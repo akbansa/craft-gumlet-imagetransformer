@@ -7,7 +7,7 @@ use craft\base\Plugin as BasePlugin;
 use craft\services\ImageTransforms;
 use craft\elements\Asset;
 use craft\base\Model;
-use craft\events\DefineBehaviorsEvent
+use craft\events\DefineBehaviorsEvent;
 use craft\web\twig\variables\CraftVariable;
 use gumlet\imagetransformer\models\Settings;
 use gumlet\imagetransformer\services\Gumlet as GumletService;
