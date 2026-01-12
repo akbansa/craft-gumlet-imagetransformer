@@ -1,5 +1,10 @@
 # Release Notes for Gumlet
 
+## 1.5.3 - 2026-01-12
+
+### Added
+- Added support for mode parameter
+
 ## 1.5.2 - 2025-12-10
 
 ### Fixed
