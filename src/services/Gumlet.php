@@ -93,6 +93,7 @@ class Gumlet extends Component
                 'height',
                 'quality',
                 'format',
+                'mode',
             ];
             
             // Separate valid transform properties from additional params
@@ -231,6 +232,11 @@ class Gumlet extends Component
                 if ($mappedFormat !== null) {
                     $params['f'] = $mappedFormat;
                 }
+            }
+
+            // Mode
+            if (!empty($transform->mode)) {
+                $params['mode'] = (string) $transform->mode;
             }
         }
 
